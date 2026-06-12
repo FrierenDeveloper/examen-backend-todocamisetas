@@ -1,0 +1,102 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API TodoCamisetas B2B",
+    "description": "API RESTful para la gestión de inventario y clientes B2B de TodoCamisetas.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000/api",
+      "description": "Servidor Local"
+    }
+  ],
+  "tags": [
+    { "name": "Camisetas", "description": "Gestión de inventario de camisetas" },
+    { "name": "Clientes", "description": "Gestión de clientes B2B" },
+    { "name": "Tallas", "description": "Gestión de tallas disponibles" }
+  ],
+  "paths": {
+    "/clientes": {
+      "post": {
+        "tags": ["Clientes"],
+        "summary": "Crear un nuevo cliente",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "nombre_comercial": "90minutos",
+                "rut": "76123456-K",
+                "direccion": "Providencia, Santiago",
+                "categoria": "Preferencial",
+                "contacto_nombre": "Matías López",
+                "contacto_correo": "compras@90min.cl",
+                "porcentaje_oferta": 20.00
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Cliente creado exitosamente",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Cliente creado",
+                  "data": { "id": 1, "rut": "76123456-K", "categoria": "Preferencial" }
+                }
+              }
+            }
+          },
+          "422": { "description": "Error de validación (Ej: RUT inválido)" },
+          "500": { "description": "Error interno del servidor" }
+        }
+      }
+    },
+    "/camisetas/{id}": {
+      "get": {
+        "tags": ["Camisetas"],
+        "summary": "Obtener una camiseta con cálculo de precio dinámico (Regla de Negocio)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          },
+          {
+            "name": "cliente_id",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer" },
+            "description": "ID del cliente para calcular si aplica precio oferta (Clientes Preferenciales)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Datos de la camiseta, tallas asociadas mediante JOIN y precio_final calculado.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "id": 1,
+                    "titulo": "Camiseta Local 2025 Chilena",
+                    "precio": 45000,
+                    "precio_oferta": 35000,
+                    "cantidad": 50,
+                    "precio_final": 35000,
+                    "tallas": [
+                      { "id": 1, "nombre": "M" }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "404": { "description": "Camiseta no encontrada" }
+        }
+      }
+    }
+  }
+}

@@ -6,20 +6,23 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('camisetas', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->string('titulo'); //
+            $table->string('club'); //
+            $table->string('pais'); //
+            $table->string('tipo'); //
+            $table->string('color'); //
+            $table->integer('precio'); // Precio base en pesos chilenos
+            $table->integer('precio_oferta')->nullable(); // Para lógica de descuentos
+            $table->integer('cantidad'); // Control de stock implícito
+            $table->text('detalles')->nullable(); //
+            $table->string('codigo_producto')->unique(); // SKU único
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('camisetas');
