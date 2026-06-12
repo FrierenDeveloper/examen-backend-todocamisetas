@@ -1,59 +1,28 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Evaluación Final - Desarrollo Backend: TodoCamisetas B2B
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[cite_start]Este proyecto implementa una API RESTful en PHP (Laravel) para **TodoCamisetas**, un proveedor mayorista especializado en la venta B2B de camisetas de fútbol[cite: 30, 31].
 
-## About Laravel
+##  Tarea 1: Arquitectura de Archivos y Patrón MVC
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+A continuación, se presenta un diagrama de alto nivel (screenshot) con la estructura de directorios del proyecto:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+![Estructura de Directorios](./public/screenshot_arquitectura.png)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Explicación de los Componentes y Flujo de la Aplicación:
+Este proyecto sigue fielmente el patrón de diseño **MVC (Modelo-Vista-Controlador)** adaptado para el desarrollo de APIs:
 
-## Learning Laravel
+1. **Rutas (`routes/api.php`):** Son el punto de entrada de la aplicación. Capturan las peticiones HTTP (GET, POST, PUT, DELETE) del cliente y las redirigen al controlador adecuado utilizando expresiones regulares para validar los parámetros (ej. exigiendo que el ID sea numérico).
+2. **Controladores (`app/Http/Controllers/`):** Actúan como el cerebro del sistema. [cite_start]Reciben las peticiones de las rutas, aplican la lógica de negocio (como calcular el `precio_final` de una camiseta si el cliente es de categoría "Preferencial" y existe un `precio_oferta` [cite: 62]) y manejan las excepciones mediante bloques `try-catch`.
+3. **Modelos y Base de Datos (`app/Models/` y `database/migrations/`):** Representan la capa de datos. Los modelos (`Camiseta`, `Cliente`, `Talla`) interactúan con la base de datos a través de Eloquent ORM. Aquí se definen las tablas, las relaciones (como la tabla pivote de muchos a muchos entre camisetas y tallas con eliminación en cascada) y se ejecutan las consultas preparadas y transacciones (`DB::transaction`).
+4. **Vistas (Respuestas JSON):** Al ser una API RESTful, no utilizamos vistas renderizadas en HTML (como Blade). En su lugar, los Controladores formatean la información obtenida de los Modelos y devuelven respuestas puramente en formato JSON con la cabecera `Content-Type: application/json` y sus respectivos códigos de estado HTTP.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+##  Despliegue Local
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+1. Levantar el entorno de base de datos MySQL (ej. mediante XAMPP).
+2. Crear una base de datos vacía.
+3. Configurar el archivo `.env` con las credenciales de conexión.
+4. Ejecutar las migraciones: `php artisan migrate`.
+5. Levantar el servidor de desarrollo: `php artisan serve`.
 
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+##  Documentación de la API
+El proyecto incluye un archivo `openapi.json` en el directorio raíz. Este archivo contiene la definición OpenAPI 3.0.0 de todos los endpoints y puede ser importado directamente a herramientas como Postman o Swagger UI para consumir los servicios.
